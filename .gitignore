@@ -16,3 +16,13 @@ crash.*.log
 # CLI configuration files
 .terraformrc
 terraform.rc
+
+# Provider plugin files
+terraform-provider-*
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore local environment files
+.env
+.env.*
