@@ -39,7 +39,10 @@ pipeline {
                 echo 'Running SonarQube analysis...'
                 script {
                     withSonarQubeEnv(SONARQUBE_SERVER) {
-                        sh './gradlew sonarqube'
+                     sh '''
+                    ./gradlew clean build
+                    ./gradlew sonarqube
+                        '''
                     }
                 }
             }
