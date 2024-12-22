@@ -77,7 +77,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig, variable: 'KUBE_CONFIG')]) {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
                     script {
                         sh '''
                         export KUBECONFIG=$KUBE_CONFIG
