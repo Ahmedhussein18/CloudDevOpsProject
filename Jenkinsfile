@@ -13,14 +13,17 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 echo 'Checking out repository...'
-                git branch: 'main', url: 'https://github.com/ahmedhussein18/CloudDevOpsProject.git'
+                git branch: 'main', url: 'https://github.com/Ibrahim-Adell/FinalProjectCode.git'
             }
         }
 
         stage('Unit Test') {
             steps {
                 echo 'Running unit tests...'
-                sh './gradlew test'
+                sh '''
+                chmod +x ./gradlew
+                ./gradlew test
+                '''
             }
         }
 
@@ -36,7 +39,10 @@ pipeline {
                 echo 'Running SonarQube analysis...'
                 script {
                     withSonarQubeEnv(SONARQUBE_SERVER) {
-                        sh './gradlew sonarqube' // For Gradle projects
+                     sh '''
+                    ./gradlew clean build
+                    ./gradlew sonarqube
+                        '''
                     }
                 }
             }
@@ -77,7 +83,7 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig, variable: 'KUBE_CONFIG')]) {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
                     script {
                         sh '''
                         export KUBECONFIG=$KUBE_CONFIG
