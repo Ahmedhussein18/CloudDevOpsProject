@@ -1,0 +1,31 @@
+- name: Restart Postgresql
+  systemd:
+    name: postgresql
+    state: restarted
+
+- name: Start Postgresql
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Enable Postgresql
+  systemd:
+    name: postgresql
+    enabled: yes
+
+- name: Restart sonar
+  service:
+    name: sonar
+    state: restarted
+
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+      daemon_reload: yes
+
+- name: Start sonar
+  service:
+    name: sonar
+    state: started
+    enabled: yes

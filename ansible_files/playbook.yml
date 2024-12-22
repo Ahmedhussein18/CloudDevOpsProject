@@ -1,0 +1,9 @@
+---
+- name: Install Apache on Dynamic Inventory Hosts
+  hosts: aws_ec2
+  become: yes
+  roles:
+    - { role: sonarqube, tags: ['sonarqube'] }
+    - { role: docker, tags: ['docker'] }
+    - {role: jenkins, tags: ['jenkins'] }  
+    - {role: minikube, tags: ['minikube']}
