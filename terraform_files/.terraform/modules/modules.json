@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"instances","Source":"./modules/instances","Dir":"modules/instances"},{"Key":"loadbalancers","Source":"./modules/loadbalancers","Dir":"modules/loadbalancers"},{"Key":"vpc","Source":"./modules/vpc","Dir":"modules/vpc"}]}
