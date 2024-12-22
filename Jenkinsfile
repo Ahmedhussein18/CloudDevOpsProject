@@ -20,7 +20,10 @@ pipeline {
         stage('Unit Test') {
             steps {
                 echo 'Running unit tests...'
-                  sh './gradlew test'
+                sh '''
+                chmod +x ./gradlew
+                ./gradlew test
+                '''
             }
         }
 
