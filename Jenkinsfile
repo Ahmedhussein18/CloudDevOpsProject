@@ -13,7 +13,7 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 echo 'Checking out repository...'
-                git branch: 'main', url: 'https://github.com/ahmedhussein18/CloudDevOpsProject.git'
+                git branch: 'main', url: 'https://github.com/Ibrahim-Adell/FinalProjectCode.git'
             }
         }
 
