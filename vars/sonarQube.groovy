@@ -1,8 +1,4 @@
 def call(envVars) {
-    pipeline {
-        agent any
-
-        stages {
             stage('Git Checkout') {
                 steps {
                     echo 'Checking out repository...'
@@ -38,5 +34,3 @@ def call(envVars) {
                 }
             }
         }
-    }
-}

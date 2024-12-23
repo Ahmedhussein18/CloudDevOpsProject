@@ -1,8 +1,4 @@
 def call(envVars) {
-    pipeline {
-        agent any
-
-        stages {
             stage('Update Deployment YAML') {
                 steps {
                     script {
@@ -27,5 +23,3 @@ def call(envVars) {
                 }
             }
         }
-    }
-}

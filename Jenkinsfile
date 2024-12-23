@@ -1,3 +1,4 @@
+@Library('shared-library') _
 pipeline {
     agent any
 
@@ -13,10 +14,10 @@ pipeline {
     }
 
     stages {
-        stage('Repo and SonarQube') {
+        stage('SonarQube') {
             steps {
                 script {
-                    repoAndSonarQube([
+                    sonarQube([
                         branch: BRANCH,
                         repoUrl: REPO_URL,
                         sonarQubeServer: SONARQUBE_SERVER

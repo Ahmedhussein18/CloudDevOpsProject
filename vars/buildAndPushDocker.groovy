@@ -1,8 +1,5 @@
 def call(envVars) {
-    pipeline {
-        agent any
 
-        stages {
             stage('Build Image') {
                 steps {
                     echo 'Building Docker image...'
@@ -28,5 +25,3 @@ def call(envVars) {
                 }
             }
         }
-    }
-}
