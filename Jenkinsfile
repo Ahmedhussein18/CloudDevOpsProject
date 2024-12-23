@@ -70,11 +70,20 @@ pipeline {
                 echo 'Pushing Docker image to registry...'
                 script {
                     withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        def imageTag = "${BUILD_NUMBER}" // Use build number as the image tag
                         sh """
                         echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${imageTag}
+                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}
                         """
+                    }
+                }
+            }
+        }
+        stage('Ensure Deployment YAML Exists') {
+            steps {
+                script {
+                    if (!fileExists('deployment.yaml')) {
+                        sh "kubectl create deployment ivolve --image= ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} --replicas=3 --dry-run=client -o yaml > deployment.yaml"
+                        sh "kubectl expose deployment ivolve --type=NodePort --port=8081"
                     }
                 }
             }
