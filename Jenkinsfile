@@ -20,17 +20,21 @@ pipeline {
         stage('Unit Test') {
             steps {
                 echo 'Running unit tests...'
+               dir('FinalProjectCode') { 
                 sh '''
                 chmod +x ./gradlew
                 ./gradlew test
                 '''
+               }    
             }
         }
 
         stage('Build JAR') {
             steps {
                 echo 'Building JAR file...'
+                dir('FinalProjectCode') {
                 sh './gradlew build'
+                }
             }
         }
 
@@ -39,10 +43,12 @@ pipeline {
                 echo 'Running SonarQube analysis...'
                 script {
                     withSonarQubeEnv(SONARQUBE_SERVER) {
-                     sh '''
+                    dir('FinalProjectCode') { 
+                    sh '''
                     ./gradlew clean build
                     ./gradlew sonarqube
                         '''
+                    }  
                     }
                 }
             }
