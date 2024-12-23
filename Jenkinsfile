@@ -102,7 +102,7 @@ pipeline {
                     script {
                         sh '''
                         export KUBECONFIG=$KUBE_CONFIG
-                        kubectl apply -f ${KUBE_DEPLOY_FILE}
+                        kubectl apply -f deployment.yaml
                         '''
                     }
                 }
