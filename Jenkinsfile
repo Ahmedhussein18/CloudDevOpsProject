@@ -82,7 +82,7 @@ pipeline {
             steps {
                 script {
                     if (!fileExists('deployment.yaml')) {
-                        sh "kubectl create deployment ivolve --image= ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} --replicas=3 --dry-run=client -o yaml > deployment.yaml"
+                        sh "kubectl create deployment ivolve --image=${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} --replicas=3 --dry-run=client -o yaml > deployment.yaml"
                         sh "kubectl expose deployment ivolve --type=NodePort --port=8081"
                     }
                 }
