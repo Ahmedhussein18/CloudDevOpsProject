@@ -78,16 +78,6 @@ pipeline {
                 }
             }
         }
-        stage('Ensure Deployment YAML Exists') {
-            steps {
-                script {
-                    if (!fileExists('deployment.yaml')) {
-                        sh "kubectl create deployment ivolve --image=${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} --replicas=3 --dry-run=client -o yaml > deployment.yaml"
-                        sh "kubectl expose deployment ivolve --type=NodePort --port=8081"
-                    }
-                }
-            }
-        }
 
         stage('Update Deployment YAML') {
             steps {
@@ -103,6 +93,7 @@ pipeline {
                         sh '''
                         export KUBECONFIG=$KUBE_CONFIG
                         kubectl apply -f deployment.yaml
+                        kubectl apply -f service.yaml
                         '''
                     }
                 }
