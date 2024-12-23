@@ -4,109 +4,51 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQube'
         DOCKER_IMAGE_NAME = 'test-image'
-        DOCKERHUB_USERNAME= 'ahmedhussein18'
+        DOCKERHUB_USERNAME = 'ahmedhussein18'
         REGISTRY_CREDENTIALS = 'dockerhub'
         KUBECONFIG = 'kubeconfig'
+        REPO_URL = 'https://github.com/ahmedhussein18/CloudDevopsProject.git'
+        BRANCH = 'main'
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
     }
 
     stages {
-        stage('Git Checkout') {
-            steps {
-                echo 'Checking out repository...'
-                git branch: 'main', url: 'https://github.com/ahmedhussein18/CloudDevopsProject.git'
-            }
-        }
-
-        stage('Unit Test') {
-            steps {
-                echo 'Running unit tests...'
-               dir('FinalProjectCode') { 
-                sh '''
-                chmod +x ./gradlew
-                ./gradlew test
-                '''
-               }    
-            }
-        }
-
-        stage('Build JAR') {
-            steps {
-                echo 'Building JAR file...'
-                dir('FinalProjectCode') {
-                sh './gradlew build'
-                }
-            }
-        }
-
-        stage('SonarQube Test') {
-            steps {
-                echo 'Running SonarQube analysis...'
-                script {
-                    withSonarQubeEnv(SONARQUBE_SERVER) {
-                    dir('FinalProjectCode') { 
-                    sh '''
-                    ./gradlew clean build
-                    ./gradlew sonarqube
-                        '''
-                    }  
-                    }
-                }
-            }
-        }
-
-        stage('Build Image') {
-            steps {
-                echo 'Building Docker image...'
-                script {
-                    sh '''
-                    docker build -t ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} .
-                    '''
-                }
-            }
-        }
-
-        stage('Push Image into Registry') {
-            steps {
-                echo 'Pushing Docker image to registry...'
-                script {
-                    withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh """
-                        echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Update Deployment YAML') {
+        stage('Repo and SonarQube') {
             steps {
                 script {
-                    sh "sed -i 's|<IMAGE_PLACEHOLDER>|${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}|g' deployment.yaml"
+                    repoAndSonarQube([
+                        branch: BRANCH,
+                        repoUrl: REPO_URL,
+                        sonarQubeServer: SONARQUBE_SERVER
+                    ])
                 }
             }
         }
+
+        stage('Build and Push Docker') {
+            steps {
+                script {
+                    buildAndPushDocker([
+                        dockerUsername: DOCKERHUB_USERNAME,
+                        imageName: DOCKER_IMAGE_NAME,
+                        buildNumber: BUILD_NUMBER,
+                        registryCredentials: REGISTRY_CREDENTIALS
+                    ])
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBE_CONFIG')]) {
-                    script {
-                        sh '''
-                        export KUBECONFIG=$KUBE_CONFIG
-                        kubectl apply -f deployment.yaml
-                        kubectl apply -f service.yaml
-                        '''
-                    }
+                script {
+                    deployToKubernetes([
+                        dockerUsername: DOCKERHUB_USERNAME,
+                        imageName: DOCKER_IMAGE_NAME,
+                        buildNumber: BUILD_NUMBER,
+                        kubeconfig: KUBECONFIG
+                    ])
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline executed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
