@@ -72,7 +72,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         def imageTag = "${BUILD_NUMBER}" // Use build number as the image tag
                         sh """
-                        echo "${DOCKER_PASSWORD}" | docker login ${REGISTRY_URL} -u "${DOCKER_USERNAME}" --password-stdin
+                        echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
                         docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE_NAME}:${imageTag}
                         """
                     }
