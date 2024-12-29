@@ -14,6 +14,7 @@ The Ansible configuration in this project:
     - Jenkins
     - SonarQube
   - **Jenkins Node**:
+    - Java
     - Docker
 - Ensures idempotency and reusability using roles and tasks.
 
