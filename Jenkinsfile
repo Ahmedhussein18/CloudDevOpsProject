@@ -39,17 +39,3 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    deployToKubernetes([
-                        dockerUsername: DOCKERHUB_USERNAME,
-                        imageName: DOCKER_IMAGE_NAME,
-                        buildNumber: BUILD_NUMBER,
-                        kubeconfig: KUBECONFIG
-                    ])
-                }
-            }
-        }
-    }
-}
